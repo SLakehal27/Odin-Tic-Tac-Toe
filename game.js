@@ -70,14 +70,42 @@ const turnManager = (() => {
         }
     }
 
+    const checkRows = () =>{
+        for(let i = 0 ; i < 3; i++){
+            if(isArrayEqual(final[i])){
+                isWinnerDeclared = true;
+            }
+        }
+    }
+
+    const checkDiagonal = () =>
+    {
+        let first = [];
+        let second = [];
+        for(let i = 0; i < 3; i++){
+            for(let j = 0; j < 3; j++){
+                if(i==j){first.push(final[i][j])};
+                if(i+j == 2){second.push(final[i][j])};
+            }
+        }
+        
+        if(isArrayEqual(first) || isArrayEqual(second)){
+            isWinnerDeclared = true;
+        }
+    }
+
     const validate = () => {
         
         let copy = [...gameBoard.board];
         for(let i = 0; i < 3;i++){
             final[i] = copy.splice(0,3);
         }
-        
+
         checkColumns();
+
+        checkRows();
+
+        checkDiagonal();
 
         if(isWinnerDeclared){
             displayController.declareWinner();
