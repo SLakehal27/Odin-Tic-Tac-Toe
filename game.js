@@ -1,5 +1,5 @@
 const gameBoard = (() =>{    
-    let board = [];
+    let board = ["","","","","","","","",""];
     
     const printBoard = ()=>
     {
@@ -12,7 +12,7 @@ const gameBoard = (() =>{
     const isFull = () =>
     {
         for(let i = 0; i < 9; i++){
-            if(gameBoard.board[i] == undefined){
+            if(gameBoard.board[i] == ""){
                 return false;
             }
         }
@@ -33,6 +33,7 @@ const turnManager = (() => {
     let isPlayerTurn = true;
     let currentPlayer = playerOne;
     let isWinnerDeclared = false;
+    let final = [];
     
     const changePlayer = () =>{
         if(currentPlayer == playerOne){
@@ -45,20 +46,63 @@ const turnManager = (() => {
         }
     }
 
-    const getCurrentPlayer = () =>{
+    const getCurrentPlayer = () => {
         return currentPlayer;
     }
 
+    const getWinStatus = () => {
+        return isWinnerDeclared;
+    }
+
+    const isArrayEqual = (arr) => {
+        for(let i = 0; i < arr.length; i++){
+            if(arr[i] != arr[0] || arr[i] == ""){
+                return false;
+            }
+        }
+        return true;
+    }
+    const checkColumns = () => {
+        for(let i = 0; i < 3; i++){
+            if(isArrayEqual(final.map(column => column[i]))){
+                isWinnerDeclared = true;
+            }
+        }
+    }
+
+    const validate = () => {
+        
+        let copy = [...gameBoard.board];
+        for(let i = 0; i < 3;i++){
+            final[i] = copy.splice(0,3);
+        }
+        
+        checkColumns();
+
+        if(isWinnerDeclared){
+            displayController.declareWinner();
+            return;
+        }
+
+    }
+
     const move = (index) => {
-        if(gameBoard.board[parseInt(index)] != undefined) {
+
+        if(isWinnerDeclared){
+            return;
+        }
+
+        if(gameBoard.board[parseInt(index)] !== "") {
             return;
         }
         else
         {
             gameBoard.board[parseInt(index)] = currentPlayer.sign;
             displayController.display();            
+            validate();
         }
     }
 
-    return {isPlayerTurn,changePlayer,move, getCurrentPlayer}
+
+    return {isPlayerTurn, getWinStatus,changePlayer,move,getCurrentPlayer, validate}
 })();
